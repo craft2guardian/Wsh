@@ -5,35 +5,48 @@
 
 namespace fs = std::filesystem;
 
-std::string getOEMInfo() {
-    HKEY hKey;
-    char oemInfo[256];
-    DWORD bufferSize = sizeof(oemInfo);
+std::string getSanitizedHostname() {
+    char hostname[256];
+    DWORD size = sizeof(hostname);
+    if (!GetComputerNameA(hostname, &size)) return "UnknownHost";
 
-    if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\BIOS", 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
-        if (RegQueryValueExA(hKey, "SystemManufacturer", NULL, NULL, (LPBYTE)oemInfo, &bufferSize) == ERROR_SUCCESS) {
-            RegCloseKey(hKey);
-            return std::string(oemInfo);
-        }
-        RegCloseKey(hKey);
-    }
+    std::string host(hostname);
 
-    return "Unknown OEM Info";
+    // Cut after first hyphen to remove random gibberish
+    size_t pos = host.find('-');
+    if (pos != std::string::npos) host = host.substr(0, pos);
+
+
+    return host;
 }
-
 
 void showHelp() {
     std::cout << "help, ls, whoami, cd, exit\n";
 }
 
+
+
 void whoami() {
     std::cout << getUsername() << std::endl;
 }
 
-void ls(std::string dir_path) {
-    if (dir_path == "") dir_path = "C:\\";
-    for (const auto&entry : fs::directory_iterator(dir_path)) {
-        std::cout << entry.path().filename().string() << std::endl;
+void ls(const std::string& dir_path) {
+    // Use current directory if nothing is passed
+    std::string path = dir_path.empty() ? fs::current_path().string() : dir_path;
+
+    // Check if path exists and is a directory BEFORE iterating
+    if (!fs::exists(path) || !fs::is_directory(path)) {
+        std::cout << "wsh: ls: Cannot access '" << path << "': No such directory\n";
+        return;
+    }
+
+    // Iterate through directory safely
+    try {
+        for (const auto& entry : fs::directory_iterator(path)) {
+            std::cout << entry.path().filename().string() << std::endl;
+        }
+    } catch (const fs::filesystem_error& e) {
+        std::cout << "wsh: ls: " << e.what() << std::endl;
     }
 }
 
