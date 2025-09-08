@@ -14,7 +14,8 @@
 
 int main() {
 
-
+    std::string title = getSanitizedHostname() + std::string(" - wsh");
+    SetConsoleTitleA(title.c_str());
 
     std::map<std::string, std::function<void(std::string)>> commands;
 
@@ -25,6 +26,8 @@ int main() {
     commands["version"] = [](std::string args){ version(); };
     commands["cd"] = [](std::string args){ cd(args); };
     commands["pwd"] = [](std::string args){ pwd(); };
+    commands["run"] = [](std::string args){ run(args); };
+    commands["clear"] = [](std::string args){ clear(); };
 
 
     std::cout << "Welcome to Wsh " << wshversion << std::endl << "This project is still an early prototype so report any bugs on my Github" << std::endl << "https://github.com/craft2guardian/Wsh\nEnjoy!\n";
