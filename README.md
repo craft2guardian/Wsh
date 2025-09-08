@@ -1,6 +1,5 @@
 # Wsh
 Fast and light command line shell written in C++ for windows. Not to be confused with Windows Script Host (currently in early prototype)
-
 This is my first project in C++ so any help/suggestions would be appreciated!
 
 
@@ -17,6 +16,8 @@ run (runs a exe)
 pwd (prints current directory)
 
 ls
+
+
 
 
 
