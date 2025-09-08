@@ -9,7 +9,7 @@ namespace fs = std::filesystem;
 
 bool isHidden(const std::filesystem::path& p) {
     DWORD attrs = GetFileAttributesW(p.wstring().c_str());
-    if (attrs == INVALID_FILE_ATTRIBUTES) return false; // file doesn’t exist
+    if (attrs == INVALID_FILE_ATTRIBUTES) return false;
     return (attrs & FILE_ATTRIBUTE_HIDDEN);
 }
 
@@ -22,7 +22,6 @@ std::string getSanitizedHostname() {
 
     std::string host(hostname);
 
-    // Cut after first hyphen to remove random gibberish
     size_t pos = host.find('-');
     if (pos != std::string::npos) host = host.substr(0, pos);
 
@@ -59,16 +58,13 @@ void whoami() {
 }
 
 void ls(const std::string& dir_path) {
-    // Use current directory if nothing is passed
     std::string path = dir_path.empty() ? targetDir : dir_path;
 
-    // Check if path exists and is a directory BEFORE iterating
     if (!fs::exists(path) || !fs::is_directory(path)) {
         std::cout << "wsh: ls: Cannot access '" << path << "': No such directory\n";
         return;
     }
 
-    // Iterate through directory safely
     try {
         for (const auto& entry : fs::directory_iterator(path)) {
             if (!isHidden(entry.path())) {
