@@ -1,11 +1,11 @@
-Wsh
+#Wsh
 
 Fast and lightweight command-line shell written in C++ for Windows.
 Not to be confused with Windows Script Host.
 
 This is my first project in C++, so any help or suggestions are very welcome!
 
-Current Features
+#Current Features
 
 clear – clears the console
 
@@ -19,7 +19,7 @@ pwd – prints the current directory
 
 ls – lists files in the current directory
 
-Notes
+#Notes
 
 This project is very early, so most things may not function as intended.
 
