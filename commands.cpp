@@ -1,9 +1,19 @@
+//commands.cpp
+
 #include <iostream>
 #include <filesystem>
 #include "commands.h"
 #include <windows.h>
 
 namespace fs = std::filesystem;
+
+bool isHidden(const std::filesystem::path& p) {
+    DWORD attrs = GetFileAttributesW(p.wstring().c_str());
+    if (attrs == INVALID_FILE_ATTRIBUTES) return false; // file doesn’t exist
+    return (attrs & FILE_ATTRIBUTE_HIDDEN);
+}
+
+std::string targetDir = "C:\\Users\\pc\\";
 
 std::string getSanitizedHostname() {
     char hostname[256];
@@ -20,11 +30,29 @@ std::string getSanitizedHostname() {
     return host;
 }
 
+
+
+
 void showHelp() {
-    std::cout << "help, ls, whoami, cd, exit\n";
+    std::cout << "help, ls, version, pwd, run, whoami, clear, cd, exit\n";
 }
 
+void cd(const std::string& arg) {
 
+    std::string newPath = arg.empty() ? "C:\\Users\\pc" : arg;
+
+    if (fs::exists(newPath) && fs::is_directory(newPath)) {
+        targetDir = newPath;
+    }
+    else {
+        std::cout << "wsh: cd: " << arg << ": No such directory\n";
+    }
+
+}
+
+void version() {
+    std::cout << "Wsh version " << wshversion << std::endl;
+}
 
 void whoami() {
     std::cout << getUsername() << std::endl;
@@ -32,7 +60,7 @@ void whoami() {
 
 void ls(const std::string& dir_path) {
     // Use current directory if nothing is passed
-    std::string path = dir_path.empty() ? fs::current_path().string() : dir_path;
+    std::string path = dir_path.empty() ? targetDir : dir_path;
 
     // Check if path exists and is a directory BEFORE iterating
     if (!fs::exists(path) || !fs::is_directory(path)) {
@@ -43,12 +71,47 @@ void ls(const std::string& dir_path) {
     // Iterate through directory safely
     try {
         for (const auto& entry : fs::directory_iterator(path)) {
-            std::cout << entry.path().filename().string() << std::endl;
+            if (!isHidden(entry.path())) {
+                std::cout << entry.path().filename().string() << std::endl;
+            }
         }
     } catch (const fs::filesystem_error& e) {
         std::cout << "wsh: ls: " << e.what() << std::endl;
     }
 }
+
+void pwd() {
+    std::cout << targetDir << std::endl;
+}
+
+void run(const std::string& args) {
+
+    if (args.empty()) {
+        std::cout << "wsh: No program specified.";
+        return;
+    }
+
+    std::filesystem::path filePath(args);
+
+    if (!std::filesystem::exists(filePath)) {
+
+        std::cout << "wsh: Specified program does not exist.\n";
+        return;
+    }
+
+    int result = system(args.c_str());
+    if (result != 0) {
+        std::cout << "wsh: " << args << ": failed to run.";
+    }
+
+}
+
+void clear() {
+
+    system("cls");
+
+}
+
 
 std::string getUsername() {
     char username[256];
