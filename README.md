@@ -1,24 +1,28 @@
-# Wsh
-Fast and light command line shell written in C++ for windows. Not to be confused with Windows Script Host (currently in early prototype)
-This is my first project in C++ so any help/suggestions would be appreciated!
+Wsh
 
+Fast and lightweight command-line shell written in C++ for Windows.
+Not to be confused with Windows Script Host.
 
-Current features:
+This is my first project in C++, so any help or suggestions are very welcome!
 
-clear
+Current Features
 
-cd
+clear – clears the console
 
-whoami
+cd – change directory
 
-run (runs a exe)
+whoami – prints the current user
 
-pwd (prints current directory)
+run – runs a .exe file
 
-ls
+pwd – prints the current directory
 
+ls – lists files in the current directory
 
+Notes
 
+This project is very early, so most things may not function as intended.
 
+Expect Windows console quirks (Quick Edit mode, title changes, etc.)
 
-This project is very early and most things will probably not function as intended
+Feedback and contributions are welcome!
