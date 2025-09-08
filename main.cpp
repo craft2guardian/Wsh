@@ -1,4 +1,4 @@
-// weird linux shell ahh program lol :skull:
+//main.cpp
 
 #include <iostream>
 #include <list>
@@ -15,20 +15,31 @@
 int main() {
 
 
+
     std::map<std::string, std::function<void(std::string)>> commands;
 
     commands["help"] = [](std::string args){ showHelp(); };
     commands["whoami"] = [](std::string args){ whoami(); };
     commands["ls"] = [](std::string args){ ls(args); };
     commands["exit"] = [](std::string args){ exit(0); };
+    commands["version"] = [](std::string args){ version(); };
+    commands["cd"] = [](std::string args){ cd(args); };
+    commands["pwd"] = [](std::string args){ pwd(); };
 
 
-    std::cout << "Welcome to Wsh 0.1!\nThis project is still an early prototype so report any bugs on my Github\nhttps://github.com/craft2guardian/Wsh\nEnjoy!\n";
+    std::cout << "Welcome to Wsh " << wshversion << std::endl << "This project is still an early prototype so report any bugs on my Github" << std::endl << "https://github.com/craft2guardian/Wsh\nEnjoy!\n";
     std::string input;
 
     while (true) {
 
-        std::cout << getUsername() << "@" << getSanitizedHostname() << ":";
+        std::string homeDir = "C:\\Users\\" + getUsername();
+        std::string displayDir = targetDir;
+
+        if (targetDir.rfind(homeDir, 0) == 0) {
+            displayDir = "" + targetDir.substr(homeDir.size());
+        }
+
+        std::cout << getUsername() << "-" << getSanitizedHostname() << " " << displayDir << " % " ;
         std::getline(std::cin, input);
         if (input.empty()) {
             continue;
